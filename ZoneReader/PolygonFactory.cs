@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
-using ZoneReader.XMLClasses;
 
 namespace ZoneReader.Extensions
 {
@@ -42,11 +41,6 @@ namespace ZoneReader.Extensions
             //Add the first point again to make a closed ring of points
             listOfCornerPoints.Add(listOfCornerPoints[0]);
             return FromPoints(listOfCornerPoints);
-        }
-
-        public static Polygon FromXMLIntervals(XMLInterval first, XMLInterval second)
-        {
-            return FromIntervals(first.ToInterval(),second.ToInterval());
         }
 
         private static List<Point> CartesianProductOfTwoLists(List<float> firstList, List<float> secondList)

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using ZoneReader.XMLClasses;
+﻿using System.Collections.Generic;
 using ZoneReader.Enums;
 
 namespace ZoneReader.LineUpClasses
