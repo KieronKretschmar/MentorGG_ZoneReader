@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
 using System.Xml.Serialization;
+using ZoneReader.Enums;
+using ZoneReader.Extensions;
 using ZoneReader.XMLClasses;
 
 namespace ZoneReader
@@ -14,7 +18,7 @@ namespace ZoneReader
             {
                 var read = (Root) ser.Deserialize(reader);
 
-                return LineUpClasses.Map.FromXML(read.Map);
+                return read.Map;
             }
         }
     }
@@ -42,6 +46,18 @@ namespace ZoneReader.XMLClasses
         public float GrenadePosY { get; set; }
         [XmlElement(ElementName = "GrenadePosZ")]
         public float GrenadePosZ { get; set; }
+
+        public static implicit operator LineUpClasses.ExampleNade(ExampleNade exampleNade)
+        {
+            var res = new LineUpClasses.ExampleNade
+            {
+                PlayerPos = new Vector3(exampleNade.PlayerPosX, exampleNade.PlayerPosY, exampleNade.PlayerPosZ),
+                DetonationPos = new Vector3(exampleNade.GrenadePosX, exampleNade.GrenadePosY, exampleNade.GrenadePosZ),
+                PlayerView = new Vector2(exampleNade.PlayerViewX, exampleNade.PlayerViewY),
+            };
+
+            return res;
+        }
     }
 
     [XmlRoot(ElementName = "release_boundaries")]
@@ -57,6 +73,18 @@ namespace ZoneReader.XMLClasses
         public XMLInterval PlayerViewX { get; set; }
         [XmlElement(ElementName = "PlayerViewY")]
         public XMLInterval PlayerViewY { get; set; }
+
+        public static implicit operator LineUpClasses.ReleaseBoundaries(ReleaseBoundaries releaseBoundaries)
+        {
+            var res = new LineUpClasses.ReleaseBoundaries
+           (
+               PolygonFactory.FromXMLIntervals(releaseBoundaries.PlayerViewX, releaseBoundaries.PlayerViewY),
+               new LineUpClasses.Boundaries(PolygonFactory.FromXMLIntervals(releaseBoundaries.PlayerPosX, releaseBoundaries.PlayerPosY),
+                   new Interval(releaseBoundaries.PlayerPosZ.Lower, releaseBoundaries.PlayerPosZ.Upper))
+           );
+
+            return res;
+        }
     }
 
     public class XMLInterval
@@ -96,6 +124,23 @@ namespace ZoneReader.XMLClasses
         public ExampleNade ExampleNade { get; set; }
         [XmlElement(ElementName = "release_boundaries")]
         public ReleaseBoundaries ReleaseBoundaries { get; set; }
+
+        public static implicit operator LineUpClasses.LineUp(LineUp lineup)
+        {
+            var res = new LineUpClasses.LineUp
+            {
+                NadeExample = lineup.ExampleNade,
+                Id = lineup.Id,
+                TargetId = lineup.TargetId,
+                SetposCommand = lineup.SetposCommand,
+                Name = lineup.Name,
+                ViewXContainsPole = Convert.ToBoolean(lineup.Viewx_contains_pole.ToLower()),
+                releaseBoundaries = lineup.ReleaseBoundaries,
+                ThrowType = lineup.ThrowType
+
+            };
+            return res;
+        }
     }
 
     [XmlRoot(ElementName = "categories")]
@@ -103,6 +148,16 @@ namespace ZoneReader.XMLClasses
     {
         [XmlElement(ElementName = "category")]
         public List<LineUp> Category { get; set; }
+
+        public static implicit operator List<LineUpClasses.LineUp>(Categories lineups)
+        {
+            var res = new List<LineUpClasses.LineUp>();
+            foreach (var item in lineups.Category)
+            {
+                res.Add(item);
+            }
+            return res;
+        }
     }
 
     [XmlRoot(ElementName = "cat_ids")]
@@ -121,6 +176,15 @@ namespace ZoneReader.XMLClasses
         public XMLInterval GrenadePosY { get; set; }
         [XmlElement(ElementName = "GrenadePosZ")]
         public XMLInterval GrenadePosZ { get; set; }
+
+        public static implicit operator LineUpClasses.Boundaries(RectangularBoundaries bounds)
+        {
+            var res = new LineUpClasses.Boundaries(
+                PolygonFactory.FromXMLIntervals(bounds.GrenadePosX, bounds.GrenadePosY),
+                new Interval(bounds.GrenadePosZ.Lower, bounds.GrenadePosZ.Upper));
+
+            return res;
+        }
     }
 
     [XmlRoot(ElementName = "target")]
@@ -140,6 +204,20 @@ namespace ZoneReader.XMLClasses
 
         [XmlElement(ElementName = "rectangular_boundaries")]
         public RectangularBoundaries RectangularBoundaries { get; set; }
+
+        public static implicit operator LineUpClasses.Target(Target target)
+        {
+            var res = new LineUpClasses.Target
+            {
+                Id = target.Id,
+                LineUpIds = target.Cat_ids.Cat_id,
+                Name = target.Name,
+                Purpose = target.Purpose,
+                Boundaries = target.RectangularBoundaries
+            };
+
+            return res;
+        }
     }
 
     [XmlRoot(ElementName = "targets")]
@@ -147,6 +225,17 @@ namespace ZoneReader.XMLClasses
     {
         [XmlElement(ElementName = "target")]
         public List<Target> Target { get; set; }
+
+        public static implicit operator List<LineUpClasses.Target>(Targets targets)
+        {
+            var res = new List<LineUpClasses.Target>();
+            foreach (var item in targets.Target)
+            {
+                res.Add(item);
+            }
+            return res;
+        }
+
     }
 
     [XmlRoot(ElementName = "map")]
@@ -158,6 +247,13 @@ namespace ZoneReader.XMLClasses
         public Categories Categories { get; set; }
         [XmlElement(ElementName = "targets")]
         public Targets Targets { get; set; }
+
+        public static implicit operator LineUpClasses.Map(Map map)
+        {
+            var mapName = Enum.Parse<ZoneMap>(map.Mapname, true);
+            var res = new LineUpClasses.Map(map.Categories, map.Targets, mapName);
+            return res;
+        }
     }
 
     [XmlRoot(ElementName = "root")]

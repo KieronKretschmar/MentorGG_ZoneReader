@@ -13,14 +13,5 @@ namespace ZoneReader.LineUpClasses
 
         public Polygon GroundPolygon { get; }
         public Interval ZInterval { get; }
-
-        public static Boundaries FromXML(XMLClasses.RectangularBoundaries rectangularBoundaries)
-        {
-            var res = new Boundaries(
-                PolygonFactory.FromXMLIntervals(rectangularBoundaries.GrenadePosX, rectangularBoundaries.GrenadePosY),
-                new Interval(rectangularBoundaries.GrenadePosZ.Lower, rectangularBoundaries.GrenadePosZ.Upper));
-
-            return res;
-        }
     }
 }
