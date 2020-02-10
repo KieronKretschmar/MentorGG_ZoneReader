@@ -9,20 +9,15 @@ namespace ZoneReader
 {
     public class Zone
     {
-        public int Id;
-        public string Name;
-
-        public ZoneMap Map;
-        public bool IsCt;
-
-        public string VideoUrl;
-
-        public string ParentZoneId;
-        public int ZoneDepth; 
-
-        public Interval ZInterval;
-
-        public Polygon Geometry;
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public ZoneMap Map { get; set; }
+        public bool IsCt { get; set; }
+        public string VideoUrl { get; set; }
+        public string ParentZoneId { get; set; }
+        public int ZoneDepth { get; set; }
+        public Interval ZInterval { get; set; }
+        public Polygon Geometry { get; set; }
 
         public Boundaries GetBoundaries()
         {
@@ -30,7 +25,5 @@ namespace ZoneReader
         }
         
         public static readonly Zone NullZoneReturningNegativeId = new Zone {  Id = -1, Geometry = null };
-
-
     }
 }

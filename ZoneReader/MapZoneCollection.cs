@@ -19,7 +19,6 @@ namespace ZoneReader
 
         public List<Zone> this[bool team] => TeamZone[team];
 
-
         public IEnumerator<KeyValuePair<bool, List<Zone>>> GetEnumerator()
         {
             return TeamZone.GetEnumerator();
