@@ -45,9 +45,9 @@ namespace ZoneReader
             [XmlElement(ElementName = "GrenadePosZ")]
             public float GrenadePosZ { get; set; }
 
-            public static implicit operator LineUpClasses.ExampleNade(ExampleNade exampleNade)
+            public static implicit operator LineUpClasses.Grenade(ExampleNade exampleNade)
             {
-                var res = new LineUpClasses.ExampleNade
+                var res = new LineUpClasses.Grenade
                 {
                     PlayerPos = new Vector3(exampleNade.PlayerPosX, exampleNade.PlayerPosY, exampleNade.PlayerPosZ),
                     DetonationPos = new Vector3(exampleNade.GrenadePosX, exampleNade.GrenadePosY, exampleNade.GrenadePosZ),
@@ -127,7 +127,7 @@ namespace ZoneReader
             {
                 var res = new LineUpClasses.LineUp
                 {
-                    NadeExample = lineup.ExampleNade,
+                    ExampleNade = lineup.ExampleNade,
                     Id = lineup.Id,
                     TargetId = lineup.TargetId,
                     SetposCommand = lineup.SetposCommand,

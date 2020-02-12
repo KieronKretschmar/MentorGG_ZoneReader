@@ -12,7 +12,7 @@ namespace ZoneReader.LineUpClasses
         public bool ViewXContainsPole { get; set; }
         public byte ThrowType { get; set; }
         public string SetposCommand { get; set; }
-        public ExampleNade NadeExample { get; set; }
+        public Grenade ExampleNade { get; set; }
         public ReleaseBoundaries releaseBoundaries { get; set; }
     }
 }

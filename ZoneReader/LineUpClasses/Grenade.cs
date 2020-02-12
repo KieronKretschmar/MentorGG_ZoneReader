@@ -2,7 +2,7 @@
 
 namespace ZoneReader.LineUpClasses
 {
-    public class ExampleNade
+    public class Grenade
     {
         public Vector3 PlayerPos { get;  set; }
         public Vector3 DetonationPos { get;  set; }

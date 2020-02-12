@@ -24,7 +24,7 @@ namespace ZoneReaderTests
             {
                 Assert.IsTrue(lineup.TargetId > 0);
                 Assert.IsNotNull(lineup.releaseBoundaries);
-                Assert.IsNotNull(lineup.NadeExample);
+                Assert.IsNotNull(lineup.ExampleNade);
 
                 Assert.IsNotNull(lineup.releaseBoundaries.PositionBoundaries);
                 Assert.IsNotNull(lineup.releaseBoundaries.ViewBoundaries);
