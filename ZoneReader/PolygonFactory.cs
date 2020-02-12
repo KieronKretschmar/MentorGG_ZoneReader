@@ -8,16 +8,16 @@ namespace ZoneReader.Extensions
 {
     public class PolygonFactory
     {
-        public static Polygon FromFloats(List<float> coords)
+        public static Polygon FromFloats(List<List<float>> coords)
         {
-            if (coords.Count % 2 != 0)
-                throw new ArgumentException("Must be an even number of coordinate values");
-
             List<Coordinate> coordinates = new List<Coordinate>();
-            for (int i = 0; i < coords.Count; i += 2)
+            foreach(var coord in coords)
             {
-                var coord = new Coordinate(coords[i], coords[i + 1]);
-                coordinates.Add(coord);
+                if (coord.Count != 2)
+                    throw new ArgumentException("list of floats must have exactly two values per coordinate");
+
+                var coordinate = new Coordinate(coord[0], coord[1]);
+                coordinates.Add(coordinate);
             }
             return new Polygon(new LinearRing(coordinates.ToArray()));
         }
