@@ -4,6 +4,9 @@ namespace ZoneReader.LineUpClasses
 {
     public class LineUp
     {
+        /// <summary>
+        /// A null lineup for which target  and lineup id are negative
+        /// </summary>
         public static LineUp NullLineUpNegativeIdAndTarget = new LineUp {Id = -1, TargetId = -1};
 
         public int Id { get; set; }

@@ -24,6 +24,9 @@ namespace ZoneReader
             return new Boundaries(Geometry, this.ZInterval);
         }
         
-        public static readonly Zone NullZoneReturningNegativeId = new Zone {  Id = -1, Geometry = null };
+        /// <summary>
+        /// A zone with negative id and default values everywhere else
+        /// </summary>
+        public static readonly Zone NullZoneReturningNegativeId = new Zone {  Id = -1};
     }
 }
