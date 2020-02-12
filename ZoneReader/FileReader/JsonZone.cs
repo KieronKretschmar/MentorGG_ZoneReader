@@ -71,7 +71,7 @@ namespace ZoneReader
             get
             {
                 if (_polygon == null)
-                    _polygon = PolygonFactory.FromFloats(coordinates.First().SelectMany(x => x).ToList());
+                    _polygon = PolygonFactory.FromFloats(coordinates.First());
 
                 return _polygon;
             }
