@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ZoneReader
 {
@@ -28,5 +29,11 @@ namespace ZoneReader
         {
             return GetEnumerator();
         }
+
+        public List<Zone> Values()
+        {
+            return TeamZone.Values.SelectMany(x=> x).ToList();
+        }
+
     }
 }
