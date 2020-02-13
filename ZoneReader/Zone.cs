@@ -14,7 +14,7 @@ namespace ZoneReader
         public ZoneMap Map { get; set; }
         public bool IsCt { get; set; }
         public string VideoUrl { get; set; }
-        public string ParentZoneId { get; set; }
+        public int ParentZoneId { get; set; }
         public int ZoneDepth { get; set; }
         public Interval ZInterval { get; set; }
         public Polygon Geometry { get; set; }

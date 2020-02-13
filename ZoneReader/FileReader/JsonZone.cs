@@ -26,7 +26,7 @@ namespace ZoneReader
                 Id = props.Id,
                 Map = Enum.Parse<ZoneMap>(jZone.properties.Map, true),
                 Name = props.Name,
-                ParentZoneId = props.ParentZoneId,
+                ParentZoneId = int.Parse(props.ParentZoneId),
                 IsCt =  props.Team == 3,
                 VideoUrl = props.VideoUrl,
                 ZInterval = props.ZInterval,
