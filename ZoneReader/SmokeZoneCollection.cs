@@ -10,13 +10,13 @@ namespace ZoneReader
     public class SmokeZoneCollection
     {
         public Dictionary<int, Target> IdTargets;
-        public List<LineUp> LineUps;
+        public Dictionary<int, LineUp> IdLineUps;
         public ZoneMap Map;
 
         public SmokeZoneCollection(Map map)
         {
             this.Map = map.MapName;
-            LineUps = map.LineUps;
+            IdLineUps = map.LineUps.ToDictionary(key=>key.Id,value => value);
             IdTargets = map.Targets.ToDictionary(key => key.Id, value => value);
         }
 
