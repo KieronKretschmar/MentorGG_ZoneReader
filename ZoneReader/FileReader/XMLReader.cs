@@ -248,7 +248,7 @@ namespace ZoneReader
 
             public static implicit operator LineUpClasses.Map(Map map)
             {
-                var mapName = Enum.Parse<ZoneMap>(map.Mapname, true);
+                var mapName = Enum.Parse<ZoneMap>(map.Mapname.ToLower(), true);
                 var res = new LineUpClasses.Map(map.Categories, map.Targets, mapName);
                 return res;
             }

@@ -5,11 +5,11 @@
     /// </summary>
     public enum ZoneMap
     {
-        De_Mirage = 1,
-        De_Dust2 = 2,
-        De_Cache = 3,
-        De_Train = 4,
-        De_Inferno = 5,
-        De_Overpass = 6,
+        de_mirage = 1,
+        de_dust2 = 2,
+        de_cache = 3,
+        de_train = 4,
+        de_inferno = 5,
+        de_overpass = 6,
     }
 }
