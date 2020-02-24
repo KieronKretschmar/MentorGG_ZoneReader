@@ -24,7 +24,7 @@ namespace ZoneReader
             {
                 Geometry = jZone.geometry.Polygon,
                 Id = props.Id,
-                Map = Enum.Parse<ZoneMap>(jZone.properties.Map.ToLower(), true),
+                Map = Enum.Parse<Enums.Map>(jZone.properties.Map.ToLower(), true),
                 Name = props.Name,
                 ParentZoneId = int.Parse(props.ParentZoneId),
                 IsCt =  props.Team == 3,

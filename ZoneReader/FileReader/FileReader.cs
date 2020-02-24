@@ -27,7 +27,10 @@ namespace ZoneReader
             { MapZoneType.Bomb, "bomb_zones" },
         };
 
-        private Dictionary<Tuple<MapZoneType, ZoneMap>, MapZoneCollection> MapZoneCollection { get; set; }
+        /// <summary>
+        /// Holds data about all Zones
+        /// </summary>
+        private Dictionary<Tuple<MapZoneType, Map>, MapZoneCollection> MapZoneCollection { get; set; }
 
         public FileReader(ILogger<FileReader> logger, string resourcesPath)
         {
@@ -36,7 +39,7 @@ namespace ZoneReader
             var path = Path.GetFullPath(resourcesPath);
 
             // Create MapZoneCollection
-            MapZoneCollection = new Dictionary<Tuple<MapZoneType, ZoneMap>, MapZoneCollection>();
+            MapZoneCollection = new Dictionary<Tuple<MapZoneType, Map>, MapZoneCollection>();
             // .. iterate through all MapZoneTypes
             foreach (var mapZoneType in directories.Keys)
             {
@@ -47,11 +50,12 @@ namespace ZoneReader
                     AddZoneFileToCollection(mapZoneType, zoneFile);
                 }
             }
+
         }
 
-        public MapZoneCollection GetZones(MapZoneType zoneType, ZoneMap map)
+        public MapZoneCollection GetZones(MapZoneType zoneType, Map map)
         {
-            var key = new Tuple<MapZoneType, ZoneMap>(zoneType, map);
+            var key = new Tuple<MapZoneType, Map>(zoneType, map);
             if(MapZoneCollection.ContainsKey(key))
             {
                 return MapZoneCollection[key];
@@ -67,7 +71,7 @@ namespace ZoneReader
             {
                 _logger.LogInformation($"Skipping file {zoneFile} because map enum could not be determined.");
             }
-            var dictKey = new Tuple<MapZoneType, ZoneMap>(mapZoneType, mapEnum);
+            var dictKey = new Tuple<MapZoneType, Map>(mapZoneType, mapEnum);
 
             // Determine whether it's a CT or T zone file
             bool IsCtFile = false;
@@ -90,10 +94,10 @@ namespace ZoneReader
             // Set zones in collection
             MapZoneCollection[dictKey].SetTeamZones(IsCtFile, jZones);
         }
-        public bool TryGetZoneMapFromFileName(string fileName, out ZoneMap mapEnum)
+        public bool TryGetZoneMapFromFileName(string fileName, out Map mapEnum)
         {
             // Create default value, only to be returned upon failure
-            mapEnum = ZoneMap.de_cache;
+            mapEnum = Map.de_cache;
 
             var mapMatch = mapFromZoneFileNameRegex.Match(fileName);
             if (!mapMatch.Success)
@@ -102,7 +106,7 @@ namespace ZoneReader
                 return false;
             }
 
-            var parseSuccess = Enum.TryParse<ZoneMap>(mapMatch.Value, true, out ZoneMap parsedMapEnum);
+            var parseSuccess = Enum.TryParse<Map>(mapMatch.Value, true, out Map parsedMapEnum);
             if (!parseSuccess)
             {
                 _logger.LogInformation($"MapEnum could not be determined from regex match {mapMatch.Value} for file {fileName}.");
@@ -113,7 +117,7 @@ namespace ZoneReader
             return true;
         }
 
-        public SmokeZoneCollection GetSmokeZones(ZoneMap map)
+        public SmokeZoneCollection GetSmokeZones(Map map)
         {
             var files = Directory.GetFiles(Path.Join(resourcesPath, smokesDirectory), "*" + map.ToString() + "*");
             var reader = new XMLReader();
