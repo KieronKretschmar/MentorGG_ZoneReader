@@ -13,7 +13,6 @@ namespace ZoneReader
     public class FileReader : IZoneReader
     {
         private readonly ILogger<FileReader> _logger;
-        private readonly string resourcesPath;
         private const string zoneFilePattern = "*.GeoJSON";
         private const string lineupFilePattern = "*.xml";
         private readonly Regex mapFromFileNameRegex = new Regex(@"((?:de|cs)_[a-z]*)(?:.GeoJSON)");
@@ -45,8 +44,6 @@ namespace ZoneReader
         public FileReader(ILogger<FileReader> logger, string resourcesPath)
         {
             this._logger = logger;
-            this.resourcesPath = resourcesPath;
-            var path = Path.GetFullPath(resourcesPath);
 
             // Create ZoneCollection
             ZoneCollections = new Dictionary<Tuple<ZoneType, Map>, ZoneCollection>();
