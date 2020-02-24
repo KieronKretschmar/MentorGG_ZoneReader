@@ -14,10 +14,14 @@ namespace ZoneReader
     {
         private readonly ILogger<FileReader> _logger;
         private readonly string resourcesPath;
-        private const string smokesDirectory = "smokes";
         private const string zoneFilePattern = "*.GeoJSON";
+        private const string lineupFilePattern = "*.xml";
         private readonly Regex mapFromFileNameRegex = new Regex(@"((?:de|cs)_[a-z]*)(?:.GeoJSON)");
 
+        private readonly Dictionary<LineupType, string> lineupDirectories = new Dictionary<LineupType, string>
+        {
+            {LineupType.Smoke, "smokes" }
+        };
 
         private readonly Dictionary<ZoneType, string> zoneDirectories = new Dictionary<ZoneType, string>
         {
@@ -36,7 +40,7 @@ namespace ZoneReader
         /// <summary>
         /// Holds data about all Lineups
         /// </summary>
-        private Dictionary<Tuple<LineupType, Map>, ZoneCollection> LineupCollection { get; set; }
+        private Dictionary<Tuple<LineupType, Map>, LineupCollection> LineupCollection { get; set; }
 
         public FileReader(ILogger<FileReader> logger, string resourcesPath)
         {
@@ -58,9 +62,14 @@ namespace ZoneReader
             }
 
             // Create LineupCollection
-            foreach (var lineupType in lineupDirectories)
+            foreach (var lineupType in lineupDirectories.Keys)
             {
-
+                // Iterate through all files (one per map) and add lineups to Collection
+                var lineupFiles = Directory.GetFiles(Path.Join(resourcesPath, lineupDirectories[lineupType]), lineupFilePattern);
+                foreach (var lineupFile in lineupFiles)
+                {
+                    AddLineupFileToCollection(lineupType, lineupFile);
+                }
             }
         }
 
@@ -142,7 +151,30 @@ namespace ZoneReader
             return true;
         }
 
-        public SmokeZoneCollection GetSmokeZones(Map map)
+        /// <summary>
+        /// Adds the lineups in the specified file to this.LineupCollection
+        /// </summary>
+        /// <param name="lineupType"></param>
+        /// <param name="lineupFile"></param>
+        private void AddLineupFileToCollection(LineupType lineupType, string lineupFile)
+        {
+            // Determine key for dictionary
+            var success = TryGetMapFromFileName(lineupFile, out var mapEnum);
+            if (!success)
+            {
+                _logger.LogInformation($"Skipping lineup file {lineupFile} because map enum could not be determined.");
+            }
+            var dictKey = new Tuple<LineupType, Map>(lineupType, mapEnum);
+
+            // Read zones of this file
+            var reader = new XMLReader();
+            var collection = new LineupCollection(reader.Deserialize(lineupFile));
+
+            LineupCollection[dictKey] = collection;
+        }
+        
+
+        public LineupCollection GetSmokeZones(Map map)
         {
             var files = Directory.GetFiles(Path.Join(resourcesPath, smokesDirectory), "*" + map.ToString() + "*");
             var reader = new XMLReader();
