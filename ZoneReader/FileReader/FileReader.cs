@@ -148,12 +148,12 @@ namespace ZoneReader
             var reader = new XMLReader();
             foreach (var file in files)
             {
-                return new SmokeZoneCollection(reader.Deserialize(file));
+                return new LineupCollection(reader.Deserialize(file));
             }
 
             //TODO OPTIONAL Add proper logging
             Console.WriteLine($"[SMOKE] No lineups found for map {map}");
-            return SmokeZoneCollection.EmptyOnMap(map);
+            return ZoneReader.LineupCollection.EmptyOnMap(map);
         }
     }
 }
