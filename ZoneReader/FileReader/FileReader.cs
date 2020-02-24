@@ -74,6 +74,12 @@ namespace ZoneReader
             return new ZoneCollection();
         }
 
+        /// <summary>
+        /// Adds the zones in the specified file to this.ZoneCollection
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="mapEnum"></param>
+        /// <returns></returns>
         private void AddZoneFileToCollection(ZoneType zoneType, string zoneFile)
         {
             // Determine key for dictionary
@@ -107,7 +113,8 @@ namespace ZoneReader
         }
 
         /// <summary>
-        /// Adds the zones in the specified file to this.ZoneCollection
+        /// Tries to parse a fileName into a Map enum if the filename follows the designated pattern,
+        /// e.g. "HE_de_cache_ct.GeoJSON" => Map.de_cache
         /// </summary>
         /// <param name="fileName"></param>
         /// <param name="mapEnum"></param>
