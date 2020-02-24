@@ -166,9 +166,11 @@ namespace ZoneReader
             }
             var dictKey = new Tuple<LineupType, Map>(lineupType, mapEnum);
 
-            // Read zones of this file
+            // Read zones of this file in legacy xml format
             var reader = new XMLReader();
-            var collection = new LineupCollection(reader.Deserialize(lineupFile));
+            var collectionLegacyFormat = reader.Deserialize(lineupFile);
+
+            var collection = collectionLegacyFormat.ToLineupCollection();
 
             LineupCollection[dictKey] = collection;
         }
