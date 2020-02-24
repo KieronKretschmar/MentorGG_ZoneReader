@@ -13,7 +13,11 @@ namespace ZoneReader
 
         public ZoneCollection()
         {
-            TeamZone = new Dictionary<bool, List<Zone>>();
+            TeamZone = new Dictionary<bool, List<Zone>>
+            {
+                {false, new List<Zone>() },
+                {true, new List<Zone>() },
+            };
         }
 
         public void SetTeamZones(bool team, List<Zone> zones)
