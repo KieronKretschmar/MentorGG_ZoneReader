@@ -26,7 +26,7 @@ namespace ZoneReader
         #region XML Classes
 
         [XmlRoot(ElementName = "centroid")]
-        internal class ExampleNade
+        public class ExampleNade
         {
             [XmlElement(ElementName = "PlayerPosX")]
             public float PlayerPosX { get; set; }
@@ -59,7 +59,7 @@ namespace ZoneReader
         }
 
         [XmlRoot(ElementName = "release_boundaries")]
-        internal class ReleaseBoundaries
+        public class ReleaseBoundaries
         {
             [XmlElement(ElementName = "PlayerPosX")]
             public XMLInterval PlayerPosX { get; set; }
@@ -85,7 +85,7 @@ namespace ZoneReader
             }
         }
 
-        internal class XMLInterval
+        public class XMLInterval
         {
             [XmlElement(ElementName = "lower")]
             public float Lower { get; set; }
@@ -104,7 +104,7 @@ namespace ZoneReader
 
 
         [XmlRoot(ElementName = "category")]
-        internal class LineUp
+        public class LineUp
         {
             [XmlElement(ElementName = "id")]
             public int Id { get; set; }
@@ -142,7 +142,7 @@ namespace ZoneReader
         }
 
         [XmlRoot(ElementName = "categories")]
-        internal class Categories
+        public class Categories
         {
             [XmlElement(ElementName = "category")]
             public List<LineUp> Category { get; set; }
@@ -159,14 +159,14 @@ namespace ZoneReader
         }
 
         [XmlRoot(ElementName = "cat_ids")]
-        internal class Cat_ids
+        public class Cat_ids
         {
             [XmlElement(ElementName = "cat_id")]
             public List<int> Cat_id { get; set; }
         }
 
         [XmlRoot(ElementName = "rectangular_boundaries")]
-        internal class RectangularBoundaries
+        public class RectangularBoundaries
         {
             [XmlElement(ElementName = "GrenadePosX")]
             public XMLInterval GrenadePosX { get; set; }
@@ -186,7 +186,7 @@ namespace ZoneReader
         }
 
         [XmlRoot(ElementName = "target")]
-        internal class Target
+        public class Target
         {
             [XmlElement(ElementName = "id")]
             public int Id { get; set; }
@@ -219,7 +219,7 @@ namespace ZoneReader
         }
 
         [XmlRoot(ElementName = "targets")]
-        internal class Targets
+        public class Targets
         {
             [XmlElement(ElementName = "target")]
             public List<Target> Target { get; set; }
@@ -237,7 +237,7 @@ namespace ZoneReader
         }
 
         [XmlRoot(ElementName = "map")]
-        internal class Map
+        public class Map
         {
             [XmlElement(ElementName = "mapname")]
             public string Mapname { get; set; }
@@ -255,7 +255,7 @@ namespace ZoneReader
         }
 
         [XmlRoot(ElementName = "root")]
-        internal class Root
+        public class Root
         {
             [XmlElement(ElementName = "map")]
             public Map Map { get; set; }
