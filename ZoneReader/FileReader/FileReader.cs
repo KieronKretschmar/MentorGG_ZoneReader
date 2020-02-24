@@ -73,6 +73,23 @@ namespace ZoneReader
             }
         }
 
+        /// <summary>
+        /// Gets all lineups of the given type and on the given map, or an empty collection if no data is available.
+        /// </summary>
+        /// <param name="lineupType"></param>
+        /// <param name="map"></param>
+        /// <returns></returns>
+        public LineupCollection GetLineups(LineupType lineupType, Map map)
+        {
+            var key = new Tuple<LineupType, Map>(lineupType, map);
+            if (LineupCollections.ContainsKey(key))
+            {
+                return LineupCollections[key];
+            }
+            // Return empty collection if no data is found
+            return LineupCollection.EmptyOnMap(map);
+        }
+
         public ZoneCollection GetZones(ZoneType zoneType, Map map)
         {
             var key = new Tuple<ZoneType, Map>(zoneType, map);
@@ -173,21 +190,6 @@ namespace ZoneReader
             var collection = collectionLegacyFormat.ToLineupCollection();
 
             LineupCollections[dictKey] = collection;
-        }
-        
-
-        public LineupCollection GetSmokeZones(Map map)
-        {
-            var files = Directory.GetFiles(Path.Join(resourcesPath, smokesDirectory), "*" + map.ToString() + "*");
-            var reader = new XMLReader();
-            foreach (var file in files)
-            {
-                return new LineupCollection(reader.Deserialize(file));
-            }
-
-            //TODO OPTIONAL Add proper logging
-            Console.WriteLine($"[SMOKE] No lineups found for map {map}");
-            return ZoneReader.LineupCollection.EmptyOnMap(map);
         }
     }
 }
