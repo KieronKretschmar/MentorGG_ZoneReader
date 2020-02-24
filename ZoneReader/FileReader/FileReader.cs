@@ -16,7 +16,7 @@ namespace ZoneReader
         private readonly string resourcesPath;
         private const string smokesDirectory = "smokes";
         private const string zoneFilePattern = "*.GeoJSON";
-        private readonly Regex mapFromZoneFileNameRegex = new Regex(@"((?:de|cs)_[a-z]*)(?:.GeoJSON)");
+        private readonly Regex mapFromFileNameRegex = new Regex(@"((?:de|cs)_[a-z]*)(?:.GeoJSON)");
 
 
         private readonly Dictionary<ZoneType, string> zoneDirectories = new Dictionary<ZoneType, string>
@@ -83,7 +83,7 @@ namespace ZoneReader
         private void AddZoneFileToCollection(ZoneType zoneType, string zoneFile)
         {
             // Determine key for dictionary
-            var success = TryGetZoneMapFromFileName(zoneFile, out var mapEnum);
+            var success = TryGetMapFromFileName(zoneFile, out var mapEnum);
             if (!success)
             {
                 _logger.LogInformation($"Skipping file {zoneFile} because map enum could not be determined.");
@@ -113,18 +113,18 @@ namespace ZoneReader
         }
 
         /// <summary>
-        /// Tries to parse a fileName into a Map enum if the filename follows the designated pattern,
+        /// Tries to parse a fileName into a Map enum if the filename contains the map's name,
         /// e.g. "HE_de_cache_ct.GeoJSON" => Map.de_cache
         /// </summary>
         /// <param name="fileName"></param>
         /// <param name="mapEnum"></param>
         /// <returns></returns>
-        public bool TryGetZoneMapFromFileName(string fileName, out Map mapEnum)
+        public bool TryGetMapFromFileName(string fileName, out Map mapEnum)
         {
             // Create default value, only to be returned upon failure
             mapEnum = Map.de_cache;
 
-            var mapMatch = mapFromZoneFileNameRegex.Match(fileName);
+            var mapMatch = mapFromFileNameRegex.Match(fileName);
             if (!mapMatch.Success)
             {
                 _logger.LogInformation($"Map name could not be determined for file {fileName}.");
