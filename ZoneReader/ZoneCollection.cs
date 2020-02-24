@@ -4,11 +4,14 @@ using System.Linq;
 
 namespace ZoneReader
 {
-    public class MapZoneCollection : IEnumerable<KeyValuePair<bool, List<Zone>>>
+    /// <summary>
+    /// Collection of zones for a particular map.
+    /// </summary>
+    public class ZoneCollection : IEnumerable<KeyValuePair<bool, List<Zone>>>
     {
         public Dictionary<bool, List<Zone>> TeamZone { get; }
 
-        public MapZoneCollection()
+        public ZoneCollection()
         {
             TeamZone = new Dictionary<bool, List<Zone>>();
         }

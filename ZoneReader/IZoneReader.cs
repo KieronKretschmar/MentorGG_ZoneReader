@@ -7,7 +7,7 @@ namespace ZoneReader
 {
     public interface IZoneReader
     {
-        MapZoneCollection GetZones(MapZoneType type, Map map);
+        ZoneCollection GetZones(ZoneType type, Map map);
         SmokeZoneCollection GetSmokeZones(Map map);
 
     }
