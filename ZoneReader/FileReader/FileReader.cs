@@ -35,12 +35,12 @@ namespace ZoneReader
         /// <summary>
         /// Holds data about all Zones
         /// </summary>
-        private Dictionary<Tuple<ZoneType, Map>, ZoneCollection> ZoneCollection { get; set; }
+        private Dictionary<Tuple<ZoneType, Map>, ZoneCollection> ZoneCollections { get; set; }
 
         /// <summary>
         /// Holds data about all Lineups
         /// </summary>
-        private Dictionary<Tuple<LineupType, Map>, LineupCollection> LineupCollection { get; set; }
+        private Dictionary<Tuple<LineupType, Map>, LineupCollection> LineupCollections { get; set; }
 
         public FileReader(ILogger<FileReader> logger, string resourcesPath)
         {
@@ -49,7 +49,7 @@ namespace ZoneReader
             var path = Path.GetFullPath(resourcesPath);
 
             // Create ZoneCollection
-            ZoneCollection = new Dictionary<Tuple<ZoneType, Map>, ZoneCollection>();
+            ZoneCollections = new Dictionary<Tuple<ZoneType, Map>, ZoneCollection>();
             // .. iterate through all ZoneTypes
             foreach (var zoneType in zoneDirectories.Keys)
             {
@@ -76,9 +76,9 @@ namespace ZoneReader
         public ZoneCollection GetZones(ZoneType zoneType, Map map)
         {
             var key = new Tuple<ZoneType, Map>(zoneType, map);
-            if(ZoneCollection.ContainsKey(key))
+            if(ZoneCollections.ContainsKey(key))
             {
-                return ZoneCollection[key];
+                return ZoneCollections[key];
             }
             return new ZoneCollection();
         }
@@ -112,13 +112,13 @@ namespace ZoneReader
 
             // Create entry in dictionary if it doesn't already exist, 
             // at this point it does exist if zones for the other team have already been loaded
-            if (!ZoneCollection.ContainsKey(dictKey))
+            if (!ZoneCollections.ContainsKey(dictKey))
             {
-                ZoneCollection[dictKey] = new ZoneCollection();
+                ZoneCollections[dictKey] = new ZoneCollection();
             }
 
             // Set zones in collection
-            ZoneCollection[dictKey].SetTeamZones(IsCtFile, jZones);
+            ZoneCollections[dictKey].SetTeamZones(IsCtFile, jZones);
         }
 
         /// <summary>
@@ -172,7 +172,7 @@ namespace ZoneReader
 
             var collection = collectionLegacyFormat.ToLineupCollection();
 
-            LineupCollection[dictKey] = collection;
+            LineupCollections[dictKey] = collection;
         }
         
 
