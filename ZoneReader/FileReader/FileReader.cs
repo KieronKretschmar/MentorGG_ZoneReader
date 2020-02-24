@@ -15,7 +15,8 @@ namespace ZoneReader
         private readonly ILogger<FileReader> _logger;
         private const string zoneFilePattern = "*.GeoJSON";
         private const string lineupFilePattern = "*.xml";
-        private readonly Regex mapFromFileNameRegex = new Regex(@"((?:de|cs)_[a-z]*)(?:.GeoJSON)");
+        private readonly Regex mapFromZoneFileNameRegex = new Regex(@"((?:de|cs)_[a-z,2]*)(?:_ct|_t){0,1}(?:.GeoJSON)");
+        private readonly Regex mapFromLineupFileNameRegex = new Regex(@"((?:de|cs)_[a-z,2]*)(?:.xml)");
 
         private readonly Dictionary<LineupType, string> lineupDirectories = new Dictionary<LineupType, string>
         {
@@ -113,7 +114,7 @@ namespace ZoneReader
         private void AddZoneFileToCollection(ZoneType zoneType, string zoneFile)
         {
             // Determine key for dictionary
-            var success = TryGetMapFromFileName(zoneFile, out var mapEnum);
+            var success = TryGetMapFromFilePath(zoneFile, out var mapEnum);
             if (!success)
             {
                 _logger.LogInformation($"Skipping file {zoneFile} because map enum could not be determined.");
@@ -146,25 +147,31 @@ namespace ZoneReader
         /// Tries to parse a fileName into a Map enum if the filename contains the map's name,
         /// e.g. "HE_de_cache_ct.GeoJSON" => Map.de_cache
         /// </summary>
-        /// <param name="fileName"></param>
+        /// <param name="filePath"></param>
         /// <param name="mapEnum"></param>
         /// <returns></returns>
-        public bool TryGetMapFromFileName(string fileName, out Map mapEnum)
+        public bool TryGetMapFromFilePath(string filePath, out Map mapEnum)
         {
             // Create default value, only to be returned upon failure
             mapEnum = Map.de_cache;
 
-            var mapMatch = mapFromFileNameRegex.Match(fileName);
+            var fileName = Path.GetFileName(filePath);
+
+            // zones are .GeoJson, lineups are currently .xml. Select regex accordingly
+            var regex = filePath.EndsWith(".GeoJSON") ? mapFromZoneFileNameRegex : mapFromLineupFileNameRegex;
+
+            var mapMatch = regex.Match(fileName);
             if (!mapMatch.Success)
             {
-                _logger.LogInformation($"Map name could not be determined for file {fileName}.");
+                _logger.LogInformation($"Map name could not be determined for file {filePath}.");
                 return false;
             }
 
-            var parseSuccess = Enum.TryParse<Map>(mapMatch.Value, true, out Map parsedMapEnum);
+            var mapName = mapMatch.Groups[1].Value;
+            var parseSuccess = Enum.TryParse<Map>(mapName, true, out Map parsedMapEnum);
             if (!parseSuccess)
             {
-                _logger.LogInformation($"MapEnum could not be determined from regex match {mapMatch.Value} for file {fileName}.");
+                _logger.LogInformation($"MapEnum could not be determined from regex match {mapMatch.Value} for file {filePath}.");
                 return false;
             }
 
@@ -180,7 +187,7 @@ namespace ZoneReader
         private void AddLineupFileToCollection(LineupType lineupType, string lineupFile)
         {
             // Determine key for dictionary
-            var success = TryGetMapFromFileName(lineupFile, out var mapEnum);
+            var success = TryGetMapFromFilePath(lineupFile, out var mapEnum);
             if (!success)
             {
                 _logger.LogInformation($"Skipping lineup file {lineupFile} because map enum could not be determined.");
