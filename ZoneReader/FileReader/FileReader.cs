@@ -59,6 +59,7 @@ namespace ZoneReader
             }
 
             // Create LineupCollection
+            LineupCollections = new Dictionary<Tuple<LineupType, Map>, LineupCollection>();
             foreach (var lineupType in lineupDirectories.Keys)
             {
                 // Iterate through all files (one per map) and add lineups to Collection
