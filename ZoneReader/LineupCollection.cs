@@ -12,16 +12,23 @@ namespace ZoneReader
     /// </summary>
     public class LineupCollection
     {
-        public Dictionary<int, Target> IdTargets;
-        public Dictionary<int, LineUp> IdLineUps;
+        /// <summary>
+        /// Dictionary of Targets with key being TargetId
+        /// </summary>
+        public Dictionary<int, Target> Targets { get; set; }
+
+        /// <summary>
+        /// Dictionary of LineUps with key being TargetId
+        /// </summary>
+        public Dictionary<int, Lineup> Lineups { get; set; }
         public Enums.Map Map;
         
         public static LineupCollection EmptyOnMap(Enums.Map map)
         {
             return new LineupCollection {
                 Map = map,
-                IdLineUps = new Dictionary<int, LineUp>(),
-                IdTargets = new Dictionary<int, Target>(),
+                Lineups = new Dictionary<int, Lineup>(),
+                Targets = new Dictionary<int, Target>(),
            };
         }
     }

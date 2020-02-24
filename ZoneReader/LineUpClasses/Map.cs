@@ -6,15 +6,15 @@ namespace ZoneReader.LineUpClasses
 {
     public class Map
     {
-        public Map(List<LineUp> lineUps, List<Target> targets, Enums.Map mapName)
+        public Map(List<Lineup> lineups, List<Target> targets, Enums.Map mapName)
         {
-            LineUps = lineUps;
+            LineUps = lineups;
             Targets = targets;
             MapName = mapName;
         }
 
         public Enums.Map MapName { get; }
-        public List<LineUp> LineUps { get; }
+        public List<Lineup> LineUps { get; }
         public List<Target> Targets { get; }
 
         public LineupCollection ToLineupCollection()
@@ -22,8 +22,8 @@ namespace ZoneReader.LineUpClasses
             return new LineupCollection
             {
                 Map = MapName,
-                IdLineUps = LineUps.ToDictionary(key => key.Id, value => value),
-                IdTargets = Targets.ToDictionary(key => key.Id, value => value),
+                Lineups = LineUps.ToDictionary(key => key.Id, value => value),
+                Targets = Targets.ToDictionary(key => key.Id, value => value),
             };
         }
     }

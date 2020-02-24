@@ -123,9 +123,9 @@ namespace ZoneReader
             [XmlElement(ElementName = "release_boundaries")]
             public ReleaseBoundaries ReleaseBoundaries { get; set; }
 
-            public static implicit operator LineUpClasses.LineUp(LineUp lineup)
+            public static implicit operator LineUpClasses.Lineup(LineUp lineup)
             {
-                var res = new LineUpClasses.LineUp
+                var res = new LineUpClasses.Lineup
                 {
                     ExampleNade = lineup.ExampleNade,
                     Id = lineup.Id,
@@ -147,9 +147,9 @@ namespace ZoneReader
             [XmlElement(ElementName = "category")]
             public List<LineUp> Category { get; set; }
 
-            public static implicit operator List<LineUpClasses.LineUp>(Categories lineups)
+            public static implicit operator List<LineUpClasses.Lineup>(Categories lineups)
             {
-                var res = new List<LineUpClasses.LineUp>();
+                var res = new List<LineUpClasses.Lineup>();
                 foreach (var item in lineups.Category)
                 {
                     res.Add(item);

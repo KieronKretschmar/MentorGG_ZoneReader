@@ -57,9 +57,9 @@ namespace ZoneReaderTests
                 }
 
                 var zones = test.GetLineups(LineupType.Smoke, map);
-                Assert.IsTrue(zones.IdLineUps.Any());
-                Assert.IsTrue(zones.IdTargets.Keys.Any());
-                Assert.IsFalse(zones.IdTargets.Values.Contains(null));
+                Assert.IsTrue(zones.Lineups.Any());
+                Assert.IsTrue(zones.Targets.Keys.Any());
+                Assert.IsFalse(zones.Targets.Values.Contains(null));
             }
         }
 
