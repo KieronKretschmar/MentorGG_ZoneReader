@@ -3,7 +3,7 @@
     /// <summary>
     /// All aspects of CS:GO for which zone-analysis happens.
     /// </summary>
-    public enum MapZoneType
+    public enum ZoneType
     {
         FireNade = 1,
         Flash = 2,

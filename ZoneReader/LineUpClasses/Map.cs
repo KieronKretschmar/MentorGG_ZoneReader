@@ -1,19 +1,30 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using ZoneReader.Enums;
 
 namespace ZoneReader.LineUpClasses
 {
     public class Map
     {
-        public Map(List<LineUp> lineUps, List<Target> targets, ZoneMap mapName)
+        public Map(List<Lineup> lineups, List<Target> targets, Enums.Map mapName)
         {
-            LineUps = lineUps;
+            LineUps = lineups;
             Targets = targets;
             MapName = mapName;
         }
 
-        public ZoneMap MapName { get; }
-        public List<LineUp> LineUps { get; }
+        public Enums.Map MapName { get; }
+        public List<Lineup> LineUps { get; }
         public List<Target> Targets { get; }
+
+        public LineupCollection ToLineupCollection()
+        {
+            return new LineupCollection
+            {
+                Map = MapName,
+                Lineups = LineUps.ToDictionary(key => key.Id, value => value),
+                Targets = Targets.ToDictionary(key => key.Id, value => value),
+            };
+        }
     }
 }

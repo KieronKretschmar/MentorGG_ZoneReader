@@ -1,61 +1,73 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ZoneReader;
 using ZoneReader.Enums;
+using Microsoft.Extensions.Logging;
 
 namespace ZoneReaderTests
 {
     [TestClass]
     public class FileReaderTests
     {
-        [DataRow(MapZoneType.FireNade)]
-        [DataRow(MapZoneType.Flash)]
-        [DataRow(MapZoneType.He)]
-        [DataRow(MapZoneType.Bomb)]
-        [DataRow(MapZoneType.Position)]
-        [DataTestMethod]
-        public void FileReaderFindsZoneFiles(MapZoneType type)
+        private readonly ServiceProvider sp;
+
+        public FileReaderTests()
         {
-            var test = new FileReader(TestHelper.GetZoneResourcesDirectory());
+            var services = new ServiceCollection();
 
-            Dictionary<ZoneMap, MapZoneCollection> zones = new Dictionary<ZoneMap, MapZoneCollection>();
+            services.AddLogging();
+            sp = services.BuildServiceProvider();
+        }
 
-            foreach (ZoneMap map in Enum.GetValues(typeof(ZoneMap)))
+        [DataRow(ZoneType.FireNade)]
+        [DataRow(ZoneType.Flash)]
+        [DataRow(ZoneType.He)]
+        [DataRow(ZoneType.Bomb)]
+        [DataRow(ZoneType.Position)]
+        [DataTestMethod]
+        public void FileReaderFindsZoneFiles(ZoneType type)
+        {
+            var test = new FileReader(sp.GetRequiredService<ILogger<FileReader>>(), TestHelper.GetZoneResourcesDirectory());
+
+            Dictionary<Map, ZoneCollection> zones = new Dictionary<Map, ZoneCollection>();
+
+            foreach (Map map in Enum.GetValues(typeof(Map)))
             {
                 var mapCollection = test.GetZones(type, map);
                 zones[map] = mapCollection;
             }
 
-            Assert.AreEqual(zones.Keys.Count, Enum.GetNames(typeof(ZoneMap)).Length);
+            Assert.AreEqual(zones.Keys.Count, Enum.GetNames(typeof(Map)).Length);
             Assert.IsFalse(zones.Values.Contains(null));
         }
 
         [TestMethod]
         public void FileReaderFindsSmokeFiles()
         {
-            var test = new FileReader(TestHelper.GetZoneResourcesDirectory());
-            foreach (ZoneMap map in Enum.GetValues(typeof(ZoneMap)))
+            var test = new FileReader(sp.GetRequiredService<ILogger<FileReader>>(), TestHelper.GetZoneResourcesDirectory());
+            foreach (Map map in Enum.GetValues(typeof(Map)))
             {
-                if (map == ZoneMap.De_Train)
+                if (map == Map.de_train)
                 {
                     //Skip de_train as there are no smoke defined for it
                     continue;
                 }
 
-                var zones = test.GetSmokeZones(map);
-                Assert.IsTrue(zones.IdLineUps.Any());
-                Assert.IsTrue(zones.IdTargets.Keys.Any());
-                Assert.IsFalse(zones.IdTargets.Values.Contains(null));
+                var zones = test.GetLineups(LineupType.Smoke, map);
+                Assert.IsTrue(zones.Lineups.Any());
+                Assert.IsTrue(zones.Targets.Keys.Any());
+                Assert.IsFalse(zones.Targets.Values.Contains(null));
             }
         }
 
         [TestMethod]
         public void FileReaderCanDeserializeGeoJson()
         {
-            var test = new FileReader(TestHelper.GetZoneResourcesDirectory());
-            var mapCollection = test.GetZones(MapZoneType.Bomb, ZoneMap.De_Mirage);
+            var test = new FileReader(sp.GetRequiredService<ILogger<FileReader>>(), TestHelper.GetZoneResourcesDirectory());
+            var mapCollection = test.GetZones(ZoneType.Bomb, Map.de_mirage);
 
             Assert.IsFalse(mapCollection.TeamZone.ContainsValue(null));
         }

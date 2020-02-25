@@ -5,64 +5,202 @@ using System.IO;
 using System.Linq;
 using ZoneReader.Enums;
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
+using Microsoft.Extensions.Logging;
 
 namespace ZoneReader
 {
     public class FileReader : IZoneReader
     {
-        private readonly string resourcesPath;
-        private const string smokesDirectory = "smokes";
-        private readonly Dictionary<MapZoneType, string> directories = new Dictionary<MapZoneType, string>
+        private readonly ILogger<FileReader> _logger;
+        private const string zoneFilePattern = "*.GeoJSON";
+        private const string lineupFilePattern = "*.xml";
+        private readonly Regex mapFromZoneFileNameRegex = new Regex(@"((?:de|cs)_[a-z,2]*)(?:_ct|_t){0,1}(?:.GeoJSON)");
+        private readonly Regex mapFromLineupFileNameRegex = new Regex(@"((?:de|cs)_[a-z,2]*)(?:.xml)");
+
+        private readonly Dictionary<LineupType, string> lineupDirectories = new Dictionary<LineupType, string>
         {
-            { MapZoneType.FireNade, "firenade_zones" },
-            { MapZoneType.Flash, "flash_zones" },
-            { MapZoneType.He, "he_zones" },
-            { MapZoneType.Position, "position_zones" },
-            { MapZoneType.Bomb, "bomb_zones" },
+            {LineupType.Smoke, "smokes" }
         };
 
-
-        public FileReader(string resourcesPath)
+        private readonly Dictionary<ZoneType, string> zoneDirectories = new Dictionary<ZoneType, string>
         {
-            this.resourcesPath = resourcesPath;
-            var path = Path.GetFullPath(resourcesPath);
-        }
+            { ZoneType.FireNade, "firenade_zones" },
+            { ZoneType.Flash, "flash_zones" },
+            { ZoneType.He, "he_zones" },
+            { ZoneType.Position, "position_zones" },
+            { ZoneType.Bomb, "bomb_zones" },
+        };
 
-        public SmokeZoneCollection GetSmokeZones(ZoneMap map)
+        /// <summary>
+        /// Holds data about all Zones
+        /// </summary>
+        private Dictionary<Tuple<ZoneType, Map>, ZoneCollection> ZoneCollections { get; set; }
+
+        /// <summary>
+        /// Holds data about all Lineups
+        /// </summary>
+        private Dictionary<Tuple<LineupType, Map>, LineupCollection> LineupCollections { get; set; }
+
+        public FileReader(ILogger<FileReader> logger, string resourcesPath)
         {
-            var files = Directory.GetFiles(Path.Join(resourcesPath, smokesDirectory), "*" + map.ToString() + "*");
-            var reader = new XMLReader();
-            foreach (var file in files)
+            this._logger = logger;
+
+            // Create ZoneCollection
+            ZoneCollections = new Dictionary<Tuple<ZoneType, Map>, ZoneCollection>();
+            // .. iterate through all ZoneTypes
+            foreach (var zoneType in zoneDirectories.Keys)
             {
-                return new SmokeZoneCollection(reader.Deserialize(file));
-            }
-
-            //TODO OPTIONAL Add proper logging
-            Console.WriteLine($"[SMOKE] No lineups found for map {map}");
-            return SmokeZoneCollection.EmptyOnMap(map);
-        }
-
-        public MapZoneCollection GetZones(MapZoneType type, ZoneMap map)
-        {
-            var res = new MapZoneCollection();
-            string mapPattern = "*" + map.ToString().ToLower() + "*";
-            var zoneFiles = Directory.GetFiles(Path.Join(resourcesPath, directories[type]), mapPattern);
-
-            foreach (string filePath in zoneFiles)
-            {
-                bool IsCt = false;
-                if (Path.GetFileName(filePath).Contains("ct"))
+                // Iterate through all files and add zones to Collection
+                var zoneFiles = Directory.GetFiles(Path.Join(resourcesPath, zoneDirectories[zoneType]), zoneFilePattern);
+                foreach (var zoneFile in zoneFiles)
                 {
-                     IsCt = true;
+                    AddZoneFileToCollection(zoneType, zoneFile);
                 }
-
-                string geoJson = File.ReadAllText(filePath);
-                JsonZoneCollection jZones = JsonConvert.DeserializeObject<JsonZoneCollection>(geoJson);
-
-                res.SetTeamZones(IsCt, jZones);
             }
 
-            return res;
+            // Create LineupCollection
+            LineupCollections = new Dictionary<Tuple<LineupType, Map>, LineupCollection>();
+            foreach (var lineupType in lineupDirectories.Keys)
+            {
+                // Iterate through all files (one per map) and add lineups to Collection
+                var lineupFiles = Directory.GetFiles(Path.Join(resourcesPath, lineupDirectories[lineupType]), lineupFilePattern);
+                foreach (var lineupFile in lineupFiles)
+                {
+                    AddLineupFileToCollection(lineupType, lineupFile);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets all lineups of the given type and on the given map, or an empty collection if no data is available.
+        /// </summary>
+        /// <param name="lineupType"></param>
+        /// <param name="map"></param>
+        /// <returns></returns>
+        public LineupCollection GetLineups(LineupType lineupType, Map map)
+        {
+            var key = new Tuple<LineupType, Map>(lineupType, map);
+            if (LineupCollections.ContainsKey(key))
+            {
+                return LineupCollections[key];
+            }
+            // Return empty collection if no data is found
+            return LineupCollection.EmptyOnMap(map);
+        }
+
+        /// <summary>
+        /// Gets all zones of the given type and on the given map, or an empty collection if no data is available.
+        /// </summary>
+        /// <param name="zoneType"></param>
+        /// <param name="map"></param>
+        /// <returns></returns>
+        public ZoneCollection GetZones(ZoneType zoneType, Map map)
+        {
+            var key = new Tuple<ZoneType, Map>(zoneType, map);
+            if(ZoneCollections.ContainsKey(key))
+            {
+                return ZoneCollections[key];
+            }
+            return new ZoneCollection();
+        }
+
+        /// <summary>
+        /// Adds the zones in the specified file to this.ZoneCollection
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="mapEnum"></param>
+        /// <returns></returns>
+        private void AddZoneFileToCollection(ZoneType zoneType, string zoneFile)
+        {
+            // Determine key for dictionary
+            var success = TryGetMapFromFilePath(zoneFile, out var mapEnum);
+            if (!success)
+            {
+                _logger.LogInformation($"Skipping file {zoneFile} because map enum could not be determined.");
+            }
+            var dictKey = new Tuple<ZoneType, Map>(zoneType, mapEnum);
+
+            // Determine whether it's a CT or T zone file
+            bool IsCtFile = false;
+            if (Path.GetFileName(zoneFile).Contains("ct"))
+            {
+                IsCtFile = true;
+            }
+
+            // Read zones of this file
+            string geoJson = File.ReadAllText(zoneFile);
+            JsonZoneCollection jZones = JsonConvert.DeserializeObject<JsonZoneCollection>(geoJson);
+
+            // Create entry in dictionary if it doesn't already exist, 
+            // at this point it does exist if zones for the other team have already been loaded
+            if (!ZoneCollections.ContainsKey(dictKey))
+            {
+                ZoneCollections[dictKey] = new ZoneCollection();
+            }
+
+            // Set zones in collection
+            ZoneCollections[dictKey].SetTeamZones(IsCtFile, jZones);
+        }
+
+        /// <summary>
+        /// Tries to parse a fileName into a Map enum if the filename contains the map's name,
+        /// e.g. "HE_de_cache_ct.GeoJSON" => Map.de_cache
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="mapEnum"></param>
+        /// <returns></returns>
+        public bool TryGetMapFromFilePath(string filePath, out Map mapEnum)
+        {
+            // Create default value, only to be returned upon failure
+            mapEnum = Map.de_cache;
+
+            var fileName = Path.GetFileName(filePath);
+
+            // zones are .GeoJson, lineups are currently .xml. Select regex accordingly
+            var regex = filePath.EndsWith(".GeoJSON") ? mapFromZoneFileNameRegex : mapFromLineupFileNameRegex;
+
+            var mapMatch = regex.Match(fileName);
+            if (!mapMatch.Success)
+            {
+                _logger.LogInformation($"Map name could not be determined for file {filePath}.");
+                return false;
+            }
+
+            var mapName = mapMatch.Groups[1].Value;
+            var parseSuccess = Enum.TryParse<Map>(mapName, true, out Map parsedMapEnum);
+            if (!parseSuccess)
+            {
+                _logger.LogInformation($"MapEnum could not be determined from regex match {mapMatch.Value} for file {filePath}.");
+                return false;
+            }
+
+            mapEnum = parsedMapEnum;
+            return true;
+        }
+
+        /// <summary>
+        /// Adds the lineups in the specified file to this.LineupCollection
+        /// </summary>
+        /// <param name="lineupType"></param>
+        /// <param name="lineupFile"></param>
+        private void AddLineupFileToCollection(LineupType lineupType, string lineupFile)
+        {
+            // Determine key for dictionary
+            var success = TryGetMapFromFilePath(lineupFile, out var mapEnum);
+            if (!success)
+            {
+                _logger.LogInformation($"Skipping lineup file {lineupFile} because map enum could not be determined.");
+            }
+            var dictKey = new Tuple<LineupType, Map>(lineupType, mapEnum);
+
+            // Read zones of this file in legacy xml format
+            var reader = new XMLReader();
+            var collectionLegacyFormat = reader.Deserialize(lineupFile);
+
+            var collection = collectionLegacyFormat.ToLineupCollection();
+
+            LineupCollections[dictKey] = collection;
         }
     }
 }

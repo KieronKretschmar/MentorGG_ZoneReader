@@ -2,12 +2,12 @@
 
 namespace ZoneReader.LineUpClasses
 {
-    public class LineUp
+    public class Lineup
     {
         /// <summary>
         /// A null lineup for which target  and lineup id are negative
         /// </summary>
-        public static LineUp NullLineUpNegativeIdAndTarget = new LineUp {Id = -1, TargetId = -1};
+        public static Lineup NullLineUpNegativeIdAndTarget = new Lineup {Id = -1, TargetId = -1};
 
         public int Id { get; set; }
         public string Name { get; set; }

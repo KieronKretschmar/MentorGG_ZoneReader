@@ -19,7 +19,7 @@ namespace ZoneReaderTests
 
             Assert.IsTrue(map.LineUps.Any());
             Assert.IsTrue(map.Targets.Any());
-            Assert.AreEqual(ZoneMap.De_Dust2, map.MapName);
+            Assert.AreEqual(Map.de_dust2, map.MapName);
             foreach (var lineup in map.LineUps)
             {
                 Assert.IsTrue(lineup.TargetId > 0);

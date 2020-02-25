@@ -26,7 +26,7 @@ namespace ZoneReader
         #region XML Classes
 
         [XmlRoot(ElementName = "centroid")]
-        internal class ExampleNade
+        public class ExampleNade
         {
             [XmlElement(ElementName = "PlayerPosX")]
             public float PlayerPosX { get; set; }
@@ -59,7 +59,7 @@ namespace ZoneReader
         }
 
         [XmlRoot(ElementName = "release_boundaries")]
-        internal class ReleaseBoundaries
+        public class ReleaseBoundaries
         {
             [XmlElement(ElementName = "PlayerPosX")]
             public XMLInterval PlayerPosX { get; set; }
@@ -85,7 +85,7 @@ namespace ZoneReader
             }
         }
 
-        internal class XMLInterval
+        public class XMLInterval
         {
             [XmlElement(ElementName = "lower")]
             public float Lower { get; set; }
@@ -104,7 +104,7 @@ namespace ZoneReader
 
 
         [XmlRoot(ElementName = "category")]
-        internal class LineUp
+        public class LineUp
         {
             [XmlElement(ElementName = "id")]
             public int Id { get; set; }
@@ -123,9 +123,9 @@ namespace ZoneReader
             [XmlElement(ElementName = "release_boundaries")]
             public ReleaseBoundaries ReleaseBoundaries { get; set; }
 
-            public static implicit operator LineUpClasses.LineUp(LineUp lineup)
+            public static implicit operator LineUpClasses.Lineup(LineUp lineup)
             {
-                var res = new LineUpClasses.LineUp
+                var res = new LineUpClasses.Lineup
                 {
                     ExampleNade = lineup.ExampleNade,
                     Id = lineup.Id,
@@ -142,14 +142,14 @@ namespace ZoneReader
         }
 
         [XmlRoot(ElementName = "categories")]
-        internal class Categories
+        public class Categories
         {
             [XmlElement(ElementName = "category")]
             public List<LineUp> Category { get; set; }
 
-            public static implicit operator List<LineUpClasses.LineUp>(Categories lineups)
+            public static implicit operator List<LineUpClasses.Lineup>(Categories lineups)
             {
-                var res = new List<LineUpClasses.LineUp>();
+                var res = new List<LineUpClasses.Lineup>();
                 foreach (var item in lineups.Category)
                 {
                     res.Add(item);
@@ -159,14 +159,14 @@ namespace ZoneReader
         }
 
         [XmlRoot(ElementName = "cat_ids")]
-        internal class Cat_ids
+        public class Cat_ids
         {
             [XmlElement(ElementName = "cat_id")]
             public List<int> Cat_id { get; set; }
         }
 
         [XmlRoot(ElementName = "rectangular_boundaries")]
-        internal class RectangularBoundaries
+        public class RectangularBoundaries
         {
             [XmlElement(ElementName = "GrenadePosX")]
             public XMLInterval GrenadePosX { get; set; }
@@ -186,7 +186,7 @@ namespace ZoneReader
         }
 
         [XmlRoot(ElementName = "target")]
-        internal class Target
+        public class Target
         {
             [XmlElement(ElementName = "id")]
             public int Id { get; set; }
@@ -219,7 +219,7 @@ namespace ZoneReader
         }
 
         [XmlRoot(ElementName = "targets")]
-        internal class Targets
+        public class Targets
         {
             [XmlElement(ElementName = "target")]
             public List<Target> Target { get; set; }
@@ -237,7 +237,7 @@ namespace ZoneReader
         }
 
         [XmlRoot(ElementName = "map")]
-        internal class Map
+        public class Map
         {
             [XmlElement(ElementName = "mapname")]
             public string Mapname { get; set; }
@@ -248,14 +248,14 @@ namespace ZoneReader
 
             public static implicit operator LineUpClasses.Map(Map map)
             {
-                var mapName = Enum.Parse<ZoneMap>(map.Mapname.ToLower(), true);
+                var mapName = Enum.Parse<Enums.Map>(map.Mapname.ToLower(), true);
                 var res = new LineUpClasses.Map(map.Categories, map.Targets, mapName);
                 return res;
             }
         }
 
         [XmlRoot(ElementName = "root")]
-        internal class Root
+        public class Root
         {
             [XmlElement(ElementName = "map")]
             public Map Map { get; set; }
