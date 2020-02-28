@@ -90,6 +90,22 @@ namespace ZoneReader
         }
 
         /// <summary>
+        /// Gets all zones of the given type, or an empty collection if no data is available.
+        /// </summary>
+        /// <param name="zoneType"></param>
+        /// <param name="map"></param>
+        /// <returns></returns>
+        public ZoneCollection GetZones(ZoneType zoneType)
+        {
+            var res = new ZoneCollection();
+            foreach (var zoneCollection in ZoneCollections.Where(x => x.Key.Item1 == zoneType).Select(x=>x.Value))
+            {
+                res.AddCollection(zoneCollection);
+            }
+            return res;
+        }
+
+        /// <summary>
         /// Gets all zones of the given type and on the given map, or an empty collection if no data is available.
         /// </summary>
         /// <param name="zoneType"></param>

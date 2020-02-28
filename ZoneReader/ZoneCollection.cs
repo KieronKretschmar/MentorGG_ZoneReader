@@ -42,5 +42,12 @@ namespace ZoneReader
             return TeamZone.Values.SelectMany(x=> x).ToList();
         }
 
+        public void AddCollection(ZoneCollection other) 
+        {
+            foreach (var key in TeamZone.Keys)
+            {
+                TeamZone[key].AddRange(other.TeamZone[key]);
+            }
+        }
     }
 }
