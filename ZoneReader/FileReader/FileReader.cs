@@ -20,7 +20,7 @@ namespace ZoneReader
 
         private readonly Dictionary<LineupType, string> lineupDirectories = new Dictionary<LineupType, string>
         {
-            {LineupType.Smoke, "smokes" }
+            {LineupType.Smoke, "smoke_lineups" }
         };
 
         private readonly Dictionary<ZoneType, string> zoneDirectories = new Dictionary<ZoneType, string>
