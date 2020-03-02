@@ -78,6 +78,29 @@ namespace ZoneReader
         /// <param name="lineupType"></param>
         /// <param name="map"></param>
         /// <returns></returns>
+        public LineupCollection GetLineups(LineupType lineupType, string map)
+        {
+            if (!Enum.IsDefined(typeof(Map), map))
+            {
+                return LineupCollection.GetEmptyCollection();
+            }
+
+            var mapEnum = Enum.Parse<Map>(map);
+            var key = new Tuple<LineupType, Map>(lineupType, mapEnum);
+            if (LineupCollections.ContainsKey(key))
+            {
+                return LineupCollections[key];
+            }
+            // Return empty collection if no data is found
+            return LineupCollection.GetEmptyCollection();
+        }
+
+        /// <summary>
+        /// Gets all lineups of the given type and on the given map, or an empty collection if no data is available.
+        /// </summary>
+        /// <param name="lineupType"></param>
+        /// <param name="map"></param>
+        /// <returns></returns>
         public LineupCollection GetLineups(LineupType lineupType, Map map)
         {
             var key = new Tuple<LineupType, Map>(lineupType, map);
@@ -86,7 +109,7 @@ namespace ZoneReader
                 return LineupCollections[key];
             }
             // Return empty collection if no data is found
-            return LineupCollection.EmptyOnMap(map);
+            return LineupCollection.GetEmptyCollection();
         }
 
         /// <summary>
@@ -103,6 +126,28 @@ namespace ZoneReader
                 res.AddCollection(zoneCollection);
             }
             return res;
+        }
+
+        /// <summary>
+        /// Gets all zones of the given type and on the given map, or an empty collection if no data is available.
+        /// </summary>
+        /// <param name="zoneType"></param>
+        /// <param name="map"></param>
+        /// <returns></returns>
+        public ZoneCollection GetZones(ZoneType zoneType, string map)
+        {
+            if (!Enum.IsDefined(typeof(Map), map))
+            {
+                return new ZoneCollection();
+            }
+
+            var mapEnum = Enum.Parse<Map>(map);
+            var key = new Tuple<ZoneType, Map>(zoneType, mapEnum);
+            if (ZoneCollections.ContainsKey(key))
+            {
+                return ZoneCollections[key];
+            }
+            return new ZoneCollection();
         }
 
         /// <summary>

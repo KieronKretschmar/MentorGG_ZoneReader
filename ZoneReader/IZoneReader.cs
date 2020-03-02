@@ -7,8 +7,10 @@ namespace ZoneReader
 {
     public interface IZoneReader
     {
+        ZoneCollection GetZones(ZoneType type, string map);
         ZoneCollection GetZones(ZoneType type, Map map);
         ZoneCollection GetZones(ZoneType type);
+        LineupCollection GetLineups(LineupType lineupType, string map);
         LineupCollection GetLineups(LineupType lineupType, Map map);
 
     }

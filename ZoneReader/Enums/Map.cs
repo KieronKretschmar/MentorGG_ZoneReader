@@ -10,6 +10,7 @@
         de_inferno = 4,
         de_cache = 5,
         de_overpass = 6,
+        de_vertigo = 7,
         de_train = 8,
     }
 }

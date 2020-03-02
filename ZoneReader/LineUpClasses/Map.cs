@@ -21,7 +21,6 @@ namespace ZoneReader.LineUpClasses
         {
             return new LineupCollection
             {
-                Map = MapName,
                 Lineups = LineUps.ToDictionary(key => key.Id, value => value),
                 Targets = Targets.ToDictionary(key => key.Id, value => value),
             };

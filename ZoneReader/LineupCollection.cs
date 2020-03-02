@@ -21,15 +21,14 @@ namespace ZoneReader
         /// Dictionary of LineUps with key being TargetId
         /// </summary>
         public Dictionary<int, Lineup> Lineups { get; set; }
-        public Enums.Map Map;
-        
-        public static LineupCollection EmptyOnMap(Enums.Map map)
+
+        public static LineupCollection GetEmptyCollection()
         {
-            return new LineupCollection {
-                Map = map,
+            return new LineupCollection
+            {
                 Lineups = new Dictionary<int, Lineup>(),
                 Targets = new Dictionary<int, Target>(),
-           };
+            };
         }
     }
 }
