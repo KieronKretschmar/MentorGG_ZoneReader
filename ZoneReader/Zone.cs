@@ -12,6 +12,7 @@ namespace ZoneReader
         public int Id { get; set; }
         public string Name { get; set; }
         public Enums.Map Map { get; set; }
+        public string MapString => Map.ToString();
         public bool IsCt { get; set; }
         public string VideoUrl { get; set; }
         public int ParentZoneId { get; set; }
