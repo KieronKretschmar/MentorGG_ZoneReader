@@ -23,7 +23,7 @@ namespace ZoneReader
             return new Zone
             {
                 Geometry = jZone.geometry.Polygon,
-                Id = props.Id,
+                ZoneId = props.Id,
                 Map = Enum.Parse<Enums.Map>(jZone.properties.Map.ToLower(), true),
                 Name = props.Name,
                 ParentZoneId = int.Parse(props.ParentZoneId),

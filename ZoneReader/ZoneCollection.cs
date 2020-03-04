@@ -56,7 +56,7 @@ namespace ZoneReader
         /// <returns></returns>
         public Dictionary<int, Zone> ToZoneDict()
         {
-            return TeamZone.Values.SelectMany(x => x).ToDictionary(x => x.Id, x => x);
+            return TeamZone.Values.SelectMany(x => x).ToDictionary(x => x.ZoneId, x => x);
         }
     }
 }

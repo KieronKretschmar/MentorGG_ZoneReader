@@ -9,7 +9,7 @@ namespace ZoneReader
 {
     public class Zone
     {
-        public int Id { get; set; }
+        public int ZoneId { get; set; }
         public string Name { get; set; }
         public Enums.Map Map { get; set; }
         public string MapString => Map.ToString();
@@ -28,6 +28,6 @@ namespace ZoneReader
         /// <summary>
         /// A zone with negative id and default values everywhere else
         /// </summary>
-        public static readonly Zone NullZoneReturningNegativeId = new Zone {  Id = -1};
+        public static readonly Zone NullZoneReturningNegativeId = new Zone {  ZoneId = -1};
     }
 }
