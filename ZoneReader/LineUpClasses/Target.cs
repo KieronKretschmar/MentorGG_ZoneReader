@@ -6,10 +6,10 @@ namespace ZoneReader.LineUpClasses
 {
     public class Target
     {
-        public int Id { get; set; }
+        public int TargetId { get; set; }
         public string Name { get; set; }
         public string Purpose { get; set; }
-        public List<int> LineUpIds { get; set; }
+        public List<int> LineupIds { get; set; }
         public Boundaries Boundaries { get; set; }
 
         /// <summary>
@@ -21,6 +21,6 @@ namespace ZoneReader.LineUpClasses
             }
         } 
 
-        public static Target NullTargetWithNegativeId => new Target {Id = -1};
+        public static Target NullTargetWithNegativeId => new Target {TargetId = -1};
     }
 }

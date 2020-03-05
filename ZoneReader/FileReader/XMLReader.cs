@@ -127,8 +127,8 @@ namespace ZoneReader
             {
                 var res = new LineUpClasses.Lineup
                 {
-                    ExampleNade = lineup.ExampleNade,
-                    Id = lineup.Id,
+                    ExampleGrenade = lineup.ExampleNade,
+                    LineupId = lineup.Id,
                     TargetId = lineup.TargetId,
                     SetposCommand = lineup.SetposCommand,
                     Name = lineup.Name,
@@ -207,8 +207,8 @@ namespace ZoneReader
             {
                 var res = new LineUpClasses.Target
                 {
-                    Id = target.Id,
-                    LineUpIds = target.Cat_ids.Cat_id,
+                    TargetId = target.Id,
+                    LineupIds = target.Cat_ids.Cat_id,
                     Name = target.Name,
                     Purpose = target.Purpose,
                     Boundaries = target.RectangularBoundaries
