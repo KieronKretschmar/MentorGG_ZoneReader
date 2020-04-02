@@ -15,8 +15,8 @@ namespace ZoneReader
         private readonly ILogger<FileReader> _logger;
         private const string zoneFilePattern = "*.GeoJSON";
         private const string lineupFilePattern = "*.xml";
-        private readonly Regex mapFromZoneFileNameRegex = new Regex(@"((?:de|cs)_[a-z,2]*)(?:_ct|_t){0,1}(?:.GeoJSON)");
-        private readonly Regex mapFromLineupFileNameRegex = new Regex(@"((?:de|cs)_[a-z,2]*)(?:.xml)");
+        private readonly Regex mapFromZoneFileNameRegex = new Regex(@"((?:de|cs)_[a-z,2]*)(?:_ct|_t){0,1}(?:.GeoJSON)", RegexOptions.IgnoreCase);
+        private readonly Regex mapFromLineupFileNameRegex = new Regex(@"((?:de|cs)_[a-z,2]*)(?:.xml)", RegexOptions.IgnoreCase);
 
         private readonly Dictionary<LineupType, string> lineupDirectories = new Dictionary<LineupType, string>
         {
